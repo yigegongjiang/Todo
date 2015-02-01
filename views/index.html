@@ -1,0 +1,104 @@
+<!doctype html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>随时记事</title>
+
+  <!-- Set render engine for 360 browser -->
+  <meta name="renderer" content="webkit">
+
+  <!-- No Baidu Siteapp-->
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+  <link rel="icon" type="image/png" href="assets/i/favicon.png">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="assets/i/app-icon72x72@2x.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+  <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png">
+  <meta name="msapplication-TileColor" content="#0e90d2">
+
+  <link rel="stylesheet" href="assets/css/amazeui.min.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<header data-am-widget="header" class="am-header am-header-default">
+  <h1 class="am-header-title">
+    <a href="#title-link" class="">For Adron</a>
+  </h1>
+</header>
+
+<!--在这里编写你的代码-->
+<ul id="contentUl" class="am-list am-list-static am-list-border am-list-striped">
+    <% allContent.forEach(function(todo, index){ %>  
+    <li ><%= todo.content %> <button onclick="deleteContent('<%= todo.id %>', this)" style="float:right;" type="button" class="am-close">&times;</button></li>  
+    <% }) %>  
+</ul>
+<div class="am-u-lg-6">
+  <div class="am-input-group">
+    <input id="content" type="text" class="am-form-field">
+    <span class="am-input-group-btn">
+      <button class="am-btn am-btn-default" type="button" onclick="addContent()">添加</button>
+    </span>
+  </div>
+</div>
+
+<script> 
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+      {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+      }
+    else
+      {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+    function addContent() {
+//        var content = document.getElementById("content").value;
+        var content = $("#content").val();
+        xmlhttp.open("GET","/add?content="+content,false);
+        xmlhttp.send();
+        if (xmlhttp.status == 200) {
+            var contentUl=document.getElementById('contentUl');
+            var li = document.createElement("li");
+            var id = "'" + xmlhttp.responseText + "'";
+            var onclickStr = '<button onclick="deleteContent(' + id + ', this)" style="float:right;" type="button" class="am-close">&times;</button>'
+            li.innerHTML = content + onclickStr;
+            contentUl.insertBefore(li,contentUl.childNodes[0]);
+	    $("#content").val("");
+        }
+    }
+
+    function deleteContent(id, obj) {
+        $(obj).parent().remove();
+        xmlhttp.open("GET","/delete?id="+id,true);
+        xmlhttp.send();
+        if (xmlhttp.status == 200) {
+        }
+    }
+</script>
+
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/amazeui.min.js"></script>
+<!--<![endif]-->
+<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<![endif]-->
+</body>
+</html>
